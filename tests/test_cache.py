@@ -2,7 +2,7 @@
 '''shove cache tests'''
 
 from stuf.six import PY3, unittest
-from shove.tests.mixins import Spawn
+from tests.mixins import Spawn
 
 setUpModule = Spawn.setUpModule
 tearDownModule = Spawn.tearDownModule
