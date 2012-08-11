@@ -2,7 +2,7 @@
 '''shove store tests'''
 
 from stuf.six import PY3, unittest, keys, values, items
-from shove.tests.mixins import Spawn
+from tests.mixins import Spawn
 
 setUpModule = Spawn.setUpModule
 tearDownModule = Spawn.tearDownModule
@@ -12,7 +12,9 @@ class Store(object):
 
     def setUp(self):
         from shove import Shove
-        self.store = Shove(self.initstring, optimize=False, compress=True, sync=0)
+        self.store = Shove(
+            self.initstring, optimize=False, compress=True, sync=0,
+        )
 
     def tearDown(self):
         self.store.close()
