@@ -6,8 +6,9 @@ from os.path import exists, join
 from os import listdir, remove, makedirs
 from zlib import compress, decompress, error
 
-from stuf.utils import ld, optimize
-from stuf.six import HIGHEST_PROTOCOL, dumps
+from stuf.six import pickle
+from stuf.utils import loads, optimize
+
 
 from shove._compat import url2pathname, quote_plus, unquote_plus
 
@@ -20,11 +21,11 @@ class Base(object):
         # keyword compress True, False, or an integer compression level (1-9)
         self._compress = kw.get('compress', False)
         # pickle protocol
-        protocol = kw.get('protocol', HIGHEST_PROTOCOL)
+        protocol = kw.get('protocol', pickle.HIGHEST_PROTOCOL)
         if kw.get('optimize', True):
             self._optimizer = partial(optimize, p=protocol)
         else:
-            self._optimizer = partial(dumps, protocol=protocol)
+            self._optimizer = partial(pickle.dumps, protocol=protocol)
 
     def __contains__(self, key):
         try:
@@ -50,7 +51,7 @@ class Base(object):
                 value = decompress(value)
             except error:
                 pass
-        return ld(value)
+        return loads(value)
 
 
 class Mapping(Base):

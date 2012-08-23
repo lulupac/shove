@@ -48,6 +48,14 @@ class CassandraStore(SimpleStore):
                 pycassa.ConnectionPool(keyspace, [spliturl.netloc]),
                 column_family,
             )
+        except pycassa.NotFoundException:
+            from pycassa.system_manager import SystemManager  # @UnresolvedImport @IgnorePep8
+            system_manager = SystemManager(spliturl[1])
+            system_manager.create_column_family(keyspace, column_family)
+            self._store = pycassa.ColumnFamily(
+                pycassa.ConnectionPool(keyspace, [spliturl.netloc]),
+                column_family,
+            )
 
     def __getitem__(self, key):
         try:

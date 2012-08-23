@@ -5,7 +5,7 @@ from functools import partial
 from operator import methodcaller
 from collections import MutableMapping
 
-from stuf.iterable import exhaustcall
+from stuf.iterable import exhaustmap
 from concurrent.futures import ThreadPoolExecutor
 
 from shove._imports import cache_backend, store_backend
@@ -114,7 +114,7 @@ class MultiShove(MutableMapping):
             self.sync()
         except AttributeError:
             pass
-        exhaustcall(methodcaller('__delitem__', key), self._stores)
+        exhaustmap(methodcaller('__delitem__', key), self._stores)
         try:
             del self._cache[key]
         except KeyError:
@@ -141,7 +141,7 @@ class MultiShove(MutableMapping):
 
     def sync(self):
         '''Writes buffer to stores.'''
-        exhaustcall(methodcaller('update', self._buffer), self._stores)
+        exhaustmap(methodcaller('update', self._buffer), self._stores)
         self._buffer.clear()
 
 
@@ -163,7 +163,7 @@ class ThreadShove(MultiShove):
             method = partial(
                 executor.submit, methodcaller('__delitem__', key)
             )
-            exhaustcall(method, self._stores)
+            exhaustmap(method, self._stores)
         try:
             del self._cache[key]
         except KeyError:
@@ -175,5 +175,5 @@ class ThreadShove(MultiShove):
             method = partial(
                 executor.submit, methodcaller('update', self._buffer),
             )
-            exhaustcall(method, self._stores)
+            exhaustmap(method, self._stores)
         self._buffer.clear()
