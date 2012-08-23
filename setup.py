@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 '''setup for shove'''
 
+from os import getcwd
+from os.path import join
+
 from setuptools import setup, find_packages
 
 
@@ -12,10 +15,14 @@ def getversion(fname):
             if line.startswith('__version__'):
                 return '%s.%s.%s' % eval(line[13:].rstrip())
 
+install_requires = list(l.strip() for l in open(
+    join(getcwd(), 'reqs/requires.txt'),
+))
+
 setup(
     name='shove',
     version=getversion('shove/__init__.py'),
-    description='''Common object storage frontend''',
+    description='Common object storage frontend.',
     long_description=open('README.rst').read(),
     author='L. C. Rees',
     author_email='lcrees@gmail.com',
@@ -23,7 +30,7 @@ setup(
     license='BSD',
     packages=find_packages(),
     test_suite='shove.tests',
-    install_requires=['futures', 'stuf>=0.8.19'],
+    install_requires=install_requires,
     zip_safe=False,
     keywords='object storage persistence database shelve',
     classifiers=[

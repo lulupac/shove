@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-'''
-shove cache core
-'''
+'''shove cache core.'''
 
 import random
 from time import time
