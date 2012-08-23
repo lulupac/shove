@@ -293,8 +293,8 @@ if not PY3:
 
         def setUp(self):
             from shove import Shove
-            from pycassa.system_manager import SystemManager  # @UnresolvedImport @IgnorePep8
-            system_manager = SystemManager('localhost:9160')
+#            from pycassa.system_manager import SystemManager  # @UnresolvedImport @IgnorePep8
+#            system_manager = SystemManager('localhost:9160')
 #            system_manager.create_column_family('Murk', 'shove')
             self.store = Shove('cassandra://localhost:9160/Murk/shove')
 

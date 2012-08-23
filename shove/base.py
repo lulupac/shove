@@ -9,7 +9,6 @@ from zlib import compress, decompress, error
 from stuf.six import pickle
 from stuf.utils import loads, optimize
 
-
 from shove._compat import url2pathname, quote_plus, unquote_plus
 
 

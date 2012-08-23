@@ -5,7 +5,7 @@ from functools import partial
 from operator import methodcaller
 from collections import MutableMapping
 
-from stuf.iterable import exhaustmap
+from stuf import exhaustmap
 from concurrent.futures import ThreadPoolExecutor
 
 from shove._imports import cache_backend, store_backend
