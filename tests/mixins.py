@@ -27,6 +27,8 @@ class Spawn(object):
         cls.process = Popen(
             cls.cmd, stdout=open('/dev/null', 'w'), shell=cls.shell
         )
+        import time
+        time.sleep(15.0)
 
     @classmethod
     def tearDownClass(cls):

@@ -209,8 +209,6 @@ class TestMongoDBStore(Store, Spawn, unittest.TestCase):
         os.mkdir('mongo')
         local('touch ./mongo/mongo.log')
         super(TestMongoDBStore, cls).setUpClass()
-        import time
-        time.sleep(10.0)
 
     def tearDown(self):
         self.store.clear()
@@ -292,17 +290,12 @@ if not PY3:
         @classmethod
         def setUpClass(cls):
             super(TestCassandraStore, cls).setUpClass()
-            import time
-            time.sleep(5.0)
 
         def setUp(self):
             from shove import Shove
             from pycassa.system_manager import SystemManager  # @UnresolvedImport @IgnorePep8
             system_manager = SystemManager('localhost:9160')
-            try:
-                system_manager.create_column_family('Murk', 'shove')
-            except:
-                pass
+#            system_manager.create_column_family('Murk', 'shove')
             self.store = Shove('cassandra://localhost:9160/Murk/shove')
 
         def tearDown(self):
@@ -315,8 +308,10 @@ if not PY3:
 
         @classmethod
         def tearDownClass(cls):
+            import time
             from fabric.api import local
             local('killall java')
+            time.sleep(15.0)
 
     class TestHDF5Store(Store, unittest.TestCase):
 

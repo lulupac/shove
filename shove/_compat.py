@@ -2,18 +2,18 @@
 '''shove compatibility shim for different python versions.'''
 
 try:
-    from urlparse import urlsplit
-    from urllib import quote_plus, unquote_plus
+    import anydbm
 except ImportError:
-    from urllib.parse import urlsplit, quote_plus, unquote_plus
+    import dbm as anydbm
 try:
     from urllib import url2pathname
 except ImportError:
     from urllib.request import url2pathname
 try:
-    import anydbm
+    from urlparse import urlsplit
+    from urllib import quote_plus, unquote_plus
 except ImportError:
-    import dbm as anydbm
+    from urllib.parse import urlsplit, quote_plus, unquote_plus
 
 from stuf.six import PY3
 from stuf.six.moves import StringIO  # @UnresolvedImport
