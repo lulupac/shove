@@ -74,7 +74,7 @@ setup(
     firebird=shove.caches.db:DBCache
     memcache=shove.caches.memcached:MemCache
     memlru=shove.cache:MemoryLRUCache
-    memory=shove.caches:MemoryCache
+    memory=shove.cache:MemoryCache
     mssql=shove.caches.db:DBCache
     mysql=shove.caches.db:DBCache
     oracle=shove.caches.db:DBCache

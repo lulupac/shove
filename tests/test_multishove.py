@@ -151,7 +151,7 @@ class TestThreadShove(unittest.TestCase):
 
     def setUp(self):
         from shove.core import ThreadShove
-        self.store = ThreadShove(*self.stores, max_workers=2, sync=0)
+        self.store = ThreadShove(*self.stores, max_workers=3, sync=0)
 
     def tearDown(self):
         import shutil
