@@ -51,9 +51,9 @@ class CacheCull(Cache):
     def test_cull(self):
         from shove._imports import cache_backend
         cache = cache_backend(self.initstring, max_entries=1)
-        cache['test'] = 'test'
-        cache['test2'] = 'test'
-        cache['test2'] = 'test'
+        cache['test1'] = 'test'
+        cache['test2'] = 'test2'
+        cache['test3'] = 'test3'
         self.assertEquals(len(cache), 1)
 
 

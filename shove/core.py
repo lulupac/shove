@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from shove._imports import cache_backend, store_backend
 
-__all__ = ('Shove', 'MultiShove')
+__all__ = 'Shove MultiShove'.split()
 
 
 class Shove(MutableMapping):
