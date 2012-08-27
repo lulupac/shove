@@ -9,7 +9,7 @@ from collections import MutableMapping
 from shove.base import Mapping, FileBase
 from shove._compat import anydbm, synchronized, url2pathname
 
-__all__ = ('DBMStore', 'FileStore', 'MemoryStore', 'SimpleStore')
+__all__ = 'DBMStore FileStore MemoryStore SimpleStore'.split()
 
 
 class BaseStore(Mapping, MutableMapping):

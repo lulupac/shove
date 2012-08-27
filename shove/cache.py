@@ -10,10 +10,10 @@ from threading import Condition
 from shove._compat import synchronized
 from shove.base import Mapping, FileBase
 
-__all__ = [
-    'FileCache', 'FileLRUCache', 'MemoryCache', 'MemoryLRUCache',
-    'SimpleLRUCache', 'SimpleCache',
-]
+__all__ = (
+    'FileCache FileLRUCache MemoryCache SimpleCache MemoryLRUCache'
+    'SimpleLRUCache'
+).split()
 
 
 class BaseCache(object):
@@ -38,36 +38,17 @@ class BaseCache(object):
         return value
 
     def __setitem__(self, key, value):
-        # cull values if over max number of entries
-        if len(self) >= self._max_entries:
-            self._cull()
         # set expiration time and value
         exp = time() + self.timeout
         super(BaseCache, self).__setitem__(key, (exp, value))
+        # cull values if over max number of entries
+        if len(self) > self._max_entries:
+            self._cull()
 
     def _cull(self):
-        num = 0
-        # remove items in cache to make room
-        maxcull = self._maxcull
-        # cull number of items allowed (set by self._maxcull)
-        for num, key in enumerate(self):
-            # remove only maximum # of items allowed by maxcull
-            if num <= maxcull:
-                # remove items if expired
-                try:
-                    self[key]
-                except KeyError:
-                    num += 1
-            else:
-                break
-        choice = random.choice
-        keys = list(self)
-        max_entries = self._max_entries
-        # remove any additional items up to max # of items allowed by maxcull
-        while len(self) >= max_entries and num <= maxcull:
-            # cull remainder of allowed quota at random
-            del self[choice(keys)]
-            num += 1
+        # cull remainder of allowed quota at random
+        for key in random.sample(list(self), len(self) - self._max_entries):
+            del self[key]
 
 
 class SimpleCache(BaseCache, Mapping):

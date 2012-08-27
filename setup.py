@@ -57,10 +57,10 @@ setup(
     leveldb=shove.stores.leveldbstore:LevelDBStore
     memory=shove.store:MemoryStore
     mongodb=shove.stores.mongodb:MongoDBStore
-    mssql=shove.store.db:DBStore
+    mssql=shove.stores.db:DBStore
     mysql=shove.stores.db:DBStore
     oracle=shove.stores.db:DBStore
-    postgres=shove.store.db:DBStore
+    postgres=shove.stores.db:DBStore
     redis=shove.stores.redisdb:RedisStore
     s3=shove.stores.s3:S3Store
     simple=shove.store:SimpleStore
