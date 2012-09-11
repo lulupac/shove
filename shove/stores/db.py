@@ -7,17 +7,16 @@ SQLAlchemy:
 
 <driver>://<username>:<password>@<host>:<port>/<database>
 
-<driver> is the database engine. The engines currently supported SQLAlchemy are
-sqlite, mysql, postgres, oracle, mssql, and firebird.
+<driver> is the database engine
 <username> is the database account user name
 <password> is the database accound password
 <host> is the database location
 <port> is the database port
 <database> is the name of the specific database
 
-For more information on specific databases see:
+For more information on supported databases, see:
 
-http://www.sqlalchemy.org/docs/dbengine.myt#dbengine_supported
+http://docs.sqlalchemy.org/en/rel_0_7/dialects/index.html
 '''
 
 from stuf.six import native

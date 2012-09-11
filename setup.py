@@ -54,6 +54,7 @@ setup(
     firebird=shove.stores.db:DBStore
     ftp=shove.stores.ftp:FTPStore
     hdf5=shove.stores.hdf5:HDF5Store
+    hstore=shove.stores.hstore:HStore
     leveldb=shove.stores.leveldbstore:LevelDBStore
     memory=shove.store:MemoryStore
     mongodb=shove.stores.mongodb:MongoDBStore
