@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 '''shove cache core.'''
 
-import random
 from time import time
 from copy import deepcopy
+from operator import delitem
 from collections import deque
+from random import seed, sample
 from threading import Condition
+
+from stuf.iterable import xpartmap
 
 from shove._compat import synchronized
 from shove.base import Mapping, FileBase
+
 
 __all__ = (
     'FileCache FileLRUCache MemoryCache SimpleCache MemoryLRUCache'
@@ -21,7 +25,7 @@ class BaseCache(object):
     def __init__(self, engine, **kw):
         super(BaseCache, self).__init__(engine, **kw)
         # get random seed
-        random.seed()
+        seed()
         # set maximum number of items to cull if over max
         self._maxcull = kw.get('maxcull', 10)
         # set max entries
@@ -47,8 +51,9 @@ class BaseCache(object):
 
     def _cull(self):
         # cull remainder of allowed quota at random
-        for key in random.sample(list(self), len(self) - self._max_entries):
-            del self[key]
+        xpartmap(
+            delitem, sample(list(self), len(self) - self._max_entries), self
+        )
 
 
 class SimpleCache(BaseCache, Mapping):
@@ -121,9 +126,7 @@ class FileCache(BaseCache, FileBase):
     def __setitem__(self, key, value):
         if len(self) >= self._max_entries:
             self._cull()
-        super(FileCache, self).__setitem__(
-            key, (time() + self.timeout, value)
-        )
+        super(FileCache, self).__setitem__(key, (time() + self.timeout, value))
 
 
 class BaseLRUCache(BaseCache):
@@ -154,12 +157,13 @@ class BaseLRUCache(BaseCache):
             store = self
             max_entries = self._max_entries
             refcount = self._refcount
-            delitem = super(BaseLRUCache, self).__delitem__
+            ditem = super(BaseLRUCache, self).__delitem__
+            qpopleft = queue.popleft
             while len(store) > max_entries:
-                k = queue.popleft()
+                k = qpopleft()
                 refcount[k] -= 1
                 if not refcount[k]:
-                    delitem(k)
+                    ditem(k)
                     del refcount[k]
 
     def _housekeep(self, key):
@@ -167,11 +171,12 @@ class BaseLRUCache(BaseCache):
         self._refcount[key] = self._refcount.get(key, 0) + 1
         if len(self._queue) > self._max_entries * 4:
             queue = self._queue
+            qpopleft, qappend = queue.popleft, queue.append
             refcount = self._refcount
             for _ in [None] * len(queue):
-                k = queue.popleft()
+                k = qpopleft()
                 if refcount[k] == 1:
-                    queue.append(k)
+                    qappend(k)
                 else:
                     refcount[k] -= 1
 

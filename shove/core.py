@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 '''shove core.'''
 
-from functools import partial
 from operator import methodcaller
 from collections import MutableMapping
 
 from stuf import exhaustmap
+from stuf.iterable import xpartmap
 from concurrent.futures import ThreadPoolExecutor
 
 from shove._imports import cache_backend, store_backend
+
 
 __all__ = 'Shove MultiShove'.split()
 
@@ -160,9 +161,10 @@ class ThreadShove(MultiShove):
         except AttributeError:
             pass
         with ThreadPoolExecutor(max_workers=self._maxworkers) as executor:
-            exhaustmap(
-                partial(executor.submit, methodcaller('__delitem__', key)),
+            xpartmap(
+                executor.submit,
                 self._stores,
+                methodcaller('__delitem__', key),
             )
         try:
             del self._cache[key]
@@ -172,8 +174,9 @@ class ThreadShove(MultiShove):
     def sync(self):
         '''Writes buffer to store.'''
         with ThreadPoolExecutor(max_workers=self._maxworkers) as executor:
-            exhaustmap(
-                partial(executor.submit, methodcaller('update', self._buffer)),
+            xpartmap(
+                executor.submit,
                 self._stores,
+                methodcaller('update', self._buffer),
             )
         self._buffer.clear()
