@@ -160,10 +160,10 @@ class ThreadShove(MultiShove):
         except AttributeError:
             pass
         with ThreadPoolExecutor(max_workers=self._maxworkers) as executor:
-            method = partial(
-                executor.submit, methodcaller('__delitem__', key)
+            exhaustmap(
+                partial(executor.submit, methodcaller('__delitem__', key)),
+                self._stores,
             )
-            exhaustmap(method, self._stores)
         try:
             del self._cache[key]
         except KeyError:
@@ -172,8 +172,8 @@ class ThreadShove(MultiShove):
     def sync(self):
         '''Writes buffer to store.'''
         with ThreadPoolExecutor(max_workers=self._maxworkers) as executor:
-            method = partial(
-                executor.submit, methodcaller('update', self._buffer),
+            exhaustmap(
+                partial(executor.submit, methodcaller('update', self._buffer)),
+                self._stores,
             )
-            exhaustmap(method, self._stores)
         self._buffer.clear()

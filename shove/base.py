@@ -21,7 +21,7 @@ class Base(object):
         self._compress = kw.get('compress', False)
         # pickle protocol
         protocol = kw.get('protocol', pickle.HIGHEST_PROTOCOL)
-        if kw.get('optimize', True):
+        if kw.get('optimize', False):
             self._optimizer = partial(optimize, p=protocol)
         else:
             self._optimizer = partial(pickle.dumps, protocol=protocol)
