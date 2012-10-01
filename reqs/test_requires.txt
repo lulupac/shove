@@ -1,1 +1,18 @@
-futures
+-r requires.txt
+fabric
+subprocess32
+nose
+coverage
+transaction
+ZODB3==3.8.0
+Durus
+python-memcached
+redis
+pycassa
+pymongo
+sqlalchemy
+hg-github
+dulwich
+hgapi
+psycopg2
+#  pyftpdlib

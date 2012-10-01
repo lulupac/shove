@@ -123,7 +123,7 @@ class FileBase(Base):
         return exists(self._key_to_file(key))
 
     def __len__(self):
-        return len(i for i in listdir(self._dir) if not i.startswith('.'))
+        return len([i for i in listdir(self._dir) if not i.startswith('.')])
 
     def _createdir(self):
         # creates the store directory

@@ -1,2 +1,2 @@
 futures
-stuf==0.9.4
+stuf==0.9.6
