@@ -10,7 +10,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 from shove._imports import cache_backend, store_backend
 
-
 __all__ = 'Shove MultiShove'.split()
 
 
@@ -73,6 +72,10 @@ class Shove(MutableMapping):
     def sync(self):
         '''Writes buffer to store.'''
         self._store.update(self._buffer)
+        self._buffer.clear()
+
+    def clear(self):
+        self._store.clear()
         self._buffer.clear()
 
 

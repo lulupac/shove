@@ -6,17 +6,16 @@ shove's URI for PostgreSQL hstore stores follows the form:
 
 hstore://<host>:<port>/<db>/collection/
 '''
+from shove._compat import urlsplit
+from shove.store import BaseStore
+from stuf.six import items, values
+import logging
 
 try:
     import psycopg2
     from psycopg2 import extras
 except ImportError:
     raise ImportError('requires `psycopg2` library')
-
-from stuf.six import items, values
-
-from shove.store import BaseStore
-from shove._compat import urlsplit
 
 __all__ = ['HStore']
 
@@ -42,6 +41,7 @@ class HStore(BaseStore):
                 cursor_factory=extras.RealDictCursor
             )
         except psycopg2.OperationalError:
+            logging.exception('configuration error')
             raise TypeError('configuration error')
         try:
             db.execute('CREATE EXTENSION hstore')
