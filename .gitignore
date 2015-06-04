@@ -1,0 +1,7 @@
+/.settings/
+/.project
+/.pydevproject
+/.tox/
+/shove.egg-info/
+/.coverage
+*.pyc

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 '''shove cache tests'''
 
-from stuf.six import PY3, unittest
-
+from stuf.six import unittest
 from tests.mixins import Spawn
 
 
@@ -95,24 +94,3 @@ class TestFileLRUCache(NoTimeout, unittest.TestCase):
         import shutil
         self.cache = None
         shutil.rmtree('test2')
-
-
-class TestDBCache(CacheCull, unittest.TestCase):
-
-    initstring = 'sqlite:///'
-
-
-if not PY3:
-    class TestMemcache(Cache, Spawn, unittest.TestCase):
-
-        initstring = 'memcache://localhost:11211'
-        cmd = ['memcached']
-
-    class TestRedisCache(Cache, Spawn, unittest.TestCase):
-
-        initstring = 'redis://localhost:6379/0'
-        cmd = ['redis-server']
-
-
-if __name__ == '__main__':
-    unittest.main()

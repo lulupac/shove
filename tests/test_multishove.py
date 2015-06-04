@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-'''shove multishove tests'''
+'''multishove tests'''
 
 from stuf.six import unittest
 
@@ -125,7 +125,7 @@ class Multi(object):
 class TestMultiShove(Multi, unittest.TestCase):
 
     stores = (
-        'simple://', 'dbm://one.dbm', 'memory://', 'file://two', 'sqlite://',
+        'simple://', 'dbm://one.dbm', 'memory://', 'file://two',
     )
 
     def setUp(self):
@@ -146,7 +146,7 @@ class TestMultiShove(Multi, unittest.TestCase):
 class TestThreadShove(unittest.TestCase):
 
     stores = (
-        'simple://', 'memory://', 'file://six', 'sqlite://',
+        'simple://', 'memory://', 'file://six',
     )
 
     def setUp(self):

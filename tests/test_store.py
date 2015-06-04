@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 '''shove store tests'''
 
-from stuf.six import PY3, unittest, keys, values, items
+from stuf.six import unittest, keys, values, items
 from tests.mixins import Spawn
+
 
 setUpModule = Spawn.setUpModule
 tearDownModule = Spawn.tearDownModule
@@ -156,26 +157,6 @@ class TestFileStore(Store, unittest.TestCase):
         shutil.rmtree('test')
 
 
-class TestHgStore(Store, unittest.TestCase):
-
-    initstring = 'hg://test3'
-
-    def tearDown(self):
-        import shutil
-        self.store.close()
-        shutil.rmtree('test3')
-
-
-class TestGitStore(Store, unittest.TestCase):
-
-    initstring = 'git://test4'
-
-    def tearDown(self):
-        import shutil
-        self.store.close()
-        shutil.rmtree('test4')
-
-
 class TestDBMStore(Store, unittest.TestCase):
 
     initstring = 'dbm://test.dbm'
@@ -187,157 +168,3 @@ class TestDBMStore(Store, unittest.TestCase):
             os.remove('test.dbm')
         except OSError:
             os.remove('test.dbm.db')
-
-
-class TestDBStore(Store, unittest.TestCase):
-
-    initstring = 'sqlite://'
-
-
-class TestMongoDBStore(Store, Spawn, unittest.TestCase):
-
-    initstring = 'mongodb://127.0.0.1:27017/shove/shove'
-    cmd = [
-        'mongod', '--dbpath', './mongo/', '--nohttpinterface',
-        '--nounixsocket',
-    ]
-
-    @classmethod
-    def setUpClass(cls):
-        import os
-        from fabric.api import local
-        os.mkdir('mongo')
-        local('touch ./mongo/mongo.log')
-        super(TestMongoDBStore, cls).setUpClass()
-
-    def tearDown(self):
-        self.store.clear()
-
-    def test_close(self):
-        pass
-
-
-@unittest.skip('reason')
-class TestFTPStore(Store, unittest.TestCase):
-
-    initstring = 'ftp://127.0.0.1/'
-
-    def setUp(self):
-        from shove import Shove
-        self.store = Shove(self.initstring, compress=True)
-
-    def tearDown(self):
-        self.store.clear()
-        self.store.close()
-
-
-@unittest.skip('reason')
-class TestS3Store(Store, unittest.TestCase):
-
-    initstring = 's3 test string here'
-
-    def tearDown(self):
-        self.store.clear()
-        self.store.close()
-
-
-if not PY3:
-    class TestZODBStore(Store, unittest.TestCase):
-
-        initstring = 'zodb://test.db'
-
-        def tearDown(self):
-            self.store.close()
-            import os
-            os.remove('test.db')
-            os.remove('test.db.index')
-            os.remove('test.db.tmp')
-            os.remove('test.db.lock')
-
-    class TestDurusStore(Store, unittest.TestCase):
-
-        initstring = 'durus://test.durus'
-
-        def tearDown(self):
-            import os
-            self.store.close()
-            os.remove('test.durus')
-
-    class TestRedisStore(Store, Spawn, unittest.TestCase):
-
-        initstring = 'redis://localhost:6379/0'
-        cmd = ['redis-server']
-
-        def tearDown(self):
-            if self.store._store is not None:
-                self.store.clear()
-                self.store.close()
-
-    @unittest.skip('reason')
-    class TestBSDBStore(Store, unittest.TestCase):
-
-        initstring = 'bsddb://test.db'
-
-        def tearDown(self):
-            import os
-            self.store.close()
-            os.remove('test.db')
-
-    class TestCassandraStore(Store, Spawn, unittest.TestCase):
-
-        cmd = ['cassandra', '-f']
-
-        @classmethod
-        def setUpClass(cls):
-            super(TestCassandraStore, cls).setUpClass()
-
-        def setUp(self):
-            from shove import Shove
-#            from pycassa.system_manager import SystemManager  # @UnresolvedImport @IgnorePep8
-#            system_manager = SystemManager('localhost:9160')
-#            system_manager.create_column_family('Murk', 'shove')
-            self.store = Shove('cassandra://localhost:9160/Murk/shove')
-
-        def tearDown(self):
-            if self.store._store is not None:
-                self.store.clear()
-                self.store.close()
-            from pycassa.system_manager import SystemManager  # @UnresolvedImport @IgnorePep8
-            system_manager = SystemManager('localhost:9160')
-            system_manager.drop_column_family('Murk', 'shove')
-
-        @classmethod
-        def tearDownClass(cls):
-            import time
-            from fabric.api import local
-            local('killall java')
-            time.sleep(15.0)
-
-    class TestHDF5Store(Store, unittest.TestCase):
-
-        initstring = 'hdf5://test.hdf5/test'
-
-        def setUp(self):
-            from shove import Shove
-            self.store = Shove()
-
-        def tearDown(self):
-            import os
-            self.store.close()
-            try:
-                os.remove('test.hdf5')
-            except OSError:
-                pass
-
-    @unittest.skip('reason')
-    class TestLevelDBStore(unittest.TestCase):
-
-        initstring = 'leveldb://test'
-
-        def tearDown(self):
-            import shutil
-            shutil.rmtree('test')
-
-
-if __name__ == '__main__':
-    unittest.main()
