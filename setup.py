@@ -46,6 +46,7 @@ setup(
     ],
     entry_points='''
     [shove.stores]
+    dbm=shove.store:DBMStore
     file=shove.store:FileStore
     memory=shove.store:MemoryStore
     simple=shove.store:SimpleStore

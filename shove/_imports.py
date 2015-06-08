@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-'''shove loadpoints.'''
+'''shove load points.'''
 
 from stuf.six import strings
 from stuf.utils import lazyimport
