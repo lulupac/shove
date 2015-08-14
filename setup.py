@@ -29,7 +29,7 @@ setup(
     url='https://bitbucket.org/lcrees/shove/',
     license='BSD',
     packages=find_packages(),
-    test_suite='shove.tests',
+    test_suite='tests',
     install_requires=install_requires,
     zip_safe=False,
     keywords='object storage persistence database shelve',
@@ -43,6 +43,8 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: Implementation :: PyPy',
+        'Programming Language :: Python :: Implementation :: Jython',
     ],
     entry_points='''
     [shove.stores]
