@@ -86,3 +86,7 @@ What's new in 0.5.3
 ===================
 
 - optimize pickling, compression pipeline (per Ling Li)
+
+What's new in 0.6.0
+
+- split non-standard library backends out

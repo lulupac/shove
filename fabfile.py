@@ -15,14 +15,6 @@ def getversion(fname):
         if line.startswith('__version__'):
             return '%s.%s.%s' % eval(line[13:].rstrip())
 
-
-def _promptup():
-    with settings(warn_only=True):
-        local('hg tag "%s"' % getversion('shove/__init__.py'))
-        local('hg push ssh://hg@bitbucket.org/lcrees/shove')
-        local('hg push github')
-
-
 def _test(val):
     truth = val in ['py26', 'py27', 'py32']
     if truth is False:
@@ -64,28 +56,7 @@ def tox_recreate():
 
 def release():
     '''release shove'''
-    local('hg update pu')
-    local('hg update next')
-    local('hg merge pu; hg ci -m automerge')
-    local('hg update maint')
-    local('hg merge default; hg ci -m automerge')
-    local('hg update default')
-    local('hg merge next; hg ci -m automerge')
-    local('hg update pu')
-    local('hg merge default; hg ci -m automerge')
-    _promptup()
-    local(regup)
-    local(sphinxup)
-    local(nodist)
 
-
-def releaser():
-    '''shove releaser'''
-#    docs()
-    _promptup()
-    local(regup)
-#    local(sphinxup)
-    local(nodist)
 
 
 def inplace():
@@ -96,18 +67,4 @@ def inplace():
         local('hg push github')
     local('./setup.py sdist --format=bztar,zip upload')
 #    local(sphinxup)
-    local(nodist)
-
-
-def release_next():
-    '''release shove from `next` branch'''
-    local('hg update maint')
-    local('hg merge default; hg ci -m automerge')
-    local('hg update default')
-    local('hg merge next; hg ci -m automerge')
-    local('hg update next')
-    local('hg merge default; hg ci -m automerge')
-    _promptup()
-    local(regup)
-    local(sphinxup)
     local(nodist)
