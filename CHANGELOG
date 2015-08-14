@@ -88,5 +88,16 @@ What's new in 0.5.3
 - optimize pickling, compression pipeline (per Ling Li)
 
 What's new in 0.6.0
+===================
 
 - split non-standard library backends out
+
+What's new in 0.6.1
+===================
+
+- confirm PyPy still works
+
+What's new in 0.6.1
+===================
+
+- confirm Jython works

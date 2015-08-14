@@ -3,12 +3,13 @@ dictionary-style access, object serialization
 and compression, and multiple storage and caching
 backends.
 
-Current supported storage backends are:
+Supported storage backends out of the box are:
 
+- DBM
 - Filesystem
 - Memory
 
-Currently supported caching backends are:
+Current supported caching backends are:
 
 - Filesystem
 - Memory

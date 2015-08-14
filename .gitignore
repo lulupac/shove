@@ -5,3 +5,7 @@
 /shove.egg-info/
 /.coverage
 *.pyc
+/build/
+/dist/
+/.eggs/
+*.class
