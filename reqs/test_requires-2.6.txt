@@ -1,0 +1,5 @@
+unittest2
+nose
+coverage
+subprocess32
+-r requires-2.6.txt
