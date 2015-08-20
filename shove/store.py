@@ -60,10 +60,13 @@ class ClientStore(PathBase, BaseStore):
     '''Base store where updates are automatically pickled/unpickled.'''
 
     def __getitem__(self, key):
-        return self.loads(super(ClientStore, self).__getitem__(key))
+        return self.loads(super(ClientStore, self).__getitem__(self.dumps(key)))
 
     def __setitem__(self, key, value):
-        super(ClientStore, self).__setitem__(key, self.dumps(value))
+        super(ClientStore, self).__setitem__(self.dumps(key), self.dumps(value))
+
+    def __delitem__(self, key):
+        super(ClientStore, self).__delitem__(self.dumps(key))
 
 
 class SyncStore(ClientStore):
@@ -109,7 +112,7 @@ class DBMStore(SyncStore):
             pass
 
     def __iter__(self):
-        return iter(self._store.keys())
+        return iter(self.loads(i) for i in self._store.keys())
 
 
 class FileStore(FileBase, BaseStore):
@@ -141,9 +144,9 @@ class SQLiteStore(SQLiteBase, BaseStore):
 
     shove's URI for sqlite stores follows the form:
 
-    sqlite://<path>
+    lite://<path>
 
     Where the path is a URI path to a file on a local filesystem or ":memory:".
     '''
 
-    init = 'sqlite://'
+    init = 'lite://'

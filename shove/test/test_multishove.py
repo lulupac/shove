@@ -125,7 +125,7 @@ class Multi(object):
 class TestMultiShove(Multi, unittest.TestCase):
 
     stores = (
-        'simple://', 'dbm://one.dbm', 'memory://', 'file://two',
+        'simple://', 'dbm://one.dbm', 'memory://', 'file://two', 'lite://:memory:',
     )
 
     def setUp(self):
@@ -146,7 +146,7 @@ class TestMultiShove(Multi, unittest.TestCase):
 class TestThreadShove(unittest.TestCase):
 
     stores = (
-        'simple://', 'memory://', 'file://six',
+        'simple://', 'memory://', 'file://six', 'lite://:memory:',
     )
 
     def setUp(self):

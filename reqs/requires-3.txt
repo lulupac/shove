@@ -1,0 +1,2 @@
+setuptools
+stuf>=0.9.14

@@ -7,9 +7,10 @@ from os.path import exists, join
 import sqlite3
 from zlib import compress, decompress, error
 
-from shove._compat import url2pathname, quote_plus, unquote_plus
 from stuf.six import native, pickle
 from stuf.utils import loads, optimize
+
+from shove._compat import url2pathname, quote_plus, unquote_plus
 
 
 class Base(object):
@@ -136,7 +137,7 @@ class FileBase(Base):
         return exists(self._key_to_file(key))
 
     def __len__(self):
-        return len([i for i in listdir(self._dir) if not i.startswith('.')])
+        return sum(1 for i in listdir(self._dir) if not i.startswith('.'))
 
     def _createdir(self):
         # creates the store directory

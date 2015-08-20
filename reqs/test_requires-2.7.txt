@@ -1,0 +1,3 @@
+nose
+coverage
+-r requires-2.7.txt

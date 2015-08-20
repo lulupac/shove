@@ -106,3 +106,10 @@ What's new in 0.6.3
 ===================
 
 - add sqlite support (uses standard library)
+
+What's new in 0.6.4
+===================
+
+- pull Jython support (for now)
+- add CPython 3.2, 3.3, 3.4, 3.5 support
+- change protocol for SQLite from 'sqlite:' to 'lite:' for compatibility

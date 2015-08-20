@@ -14,12 +14,16 @@ def getversion(fname):
             if line.startswith('__version__'):
                 return '%s.%s.%s' % eval(line[13:].rstrip())
 
-requires = 'futures setuptools stuf>=0.9.14'
+requires = 'setuptools stuf>=0.9.14'
 test_requires = 'nose coverage'
 
-if float('%d.%d' % sys.version_info[:2]) < 2.7:
-    requires = 'ordereddict importlib ' + requires
+system = float('%d.%d' % sys.version_info[:2])
+
+if system < 2.7:
+    requires = 'ordereddict importlib futures ' + requires
     test_requires = 'unittest2 ' + test_requires
+elif system == 2.7:
+    requires = 'futures ' + requires
 
 setup(
     name='shove',
@@ -39,28 +43,35 @@ setup(
     keywords='object storage persistence database dictionary',
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Environment :: Web Environment',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Database :: Front-Ends',
+        'Topic :: Software Development :: Libraries',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: Implementation :: PyPy',
-        'Programming Language :: Python :: Implementation :: Jython',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Framework :: Setuptools Plugin',
     ],
     entry_points='''\
     [shove.stores]
     dbm=shove.store:DBMStore
     file=shove.store:FileStore
-    sqlite=shove.store:SQLiteStore
+    lite=shove.store:SQLiteStore
     memory=shove.store:MemoryStore
     simple=shove.store:SimpleStore
     [shove.caches]
     file=shove.cache:FileCache
     filelru=shove.cache:FileLRUCache
-    sqlite=shove.cache:SQLiteCache
+    lite=shove.cache:SQLiteCache
     memlru=shove.cache:MemoryLRUCache
     memory=shove.cache:MemoryCache
     simple=shove.cache:SimpleCache

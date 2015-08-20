@@ -172,12 +172,12 @@ class TestDBMStore(Store, unittest.TestCase):
 
 class TestSQLiteMemoryStore(Store, unittest.TestCase):
 
-    initstring = 'sqlite://:memory:'
+    initstring = 'lite://:memory:'
 
 
 class TestSQLiteDiskStore(Store, unittest.TestCase):
 
-    initstring = 'sqlite://test.db'
+    initstring = 'lite://test.db'
 
     def tearDown(self):
         import os
