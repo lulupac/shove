@@ -2,5 +2,4 @@ include LICENSE
 include CHANGELOG
 include MANIFEST.in
 include README.rst
-include reqs/requires.txt
 recursive-include shove *.py
