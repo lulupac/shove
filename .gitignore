@@ -2,10 +2,11 @@
 /.project
 /.pydevproject
 /.tox/
-/shove.egg-info/
+/*.egg-info/
 /.coverage
 *.pyc
 /build/
 /dist/
 /.eggs/
 *.class
+__pycache__/

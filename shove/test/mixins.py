@@ -23,7 +23,10 @@ class Spawn(object):
 
     @classmethod
     def setUpClass(cls):
-        from subprocess32 import Popen  # @UnresolvedImport
+        try:
+            from subprocess import Popen
+        except ImportError:
+            from subprocess32 import Popen  # @UnresolvedImport
         cls.process = Popen(
             cls.cmd, stdout=open('/dev/null', 'w'), shell=cls.shell
         )

@@ -5,6 +5,6 @@ Common object storage frontend.
 
 from shove.core import Shove
 
-__version__ = (0, 6, 4)
+__version__ = (0, 6, 5)
 
 __all__ = ['Shove']

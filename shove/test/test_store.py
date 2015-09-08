@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 '''shove store tests'''
 
-from shove.test.mixins import Spawn
 from stuf.six import unittest, keys, values, items
-
-
-setUpModule = Spawn.setUpModule
-tearDownModule = Spawn.tearDownModule
 
 
 class Store(object):
@@ -137,6 +132,24 @@ class Store(object):
         self.assertEqual(self.store._cache, None)
 
 
+class PathStore(Store):
+
+    def setUp(self):
+        import os
+        from tempfile import mkdtemp
+        TMP = mkdtemp()
+        os.environ['TEST_DIR'] = TMP
+        os.chdir(TMP)
+        super(PathStore, self).setUp()
+
+    def tearDown(self):
+        super(PathStore, self).tearDown()
+        import os
+        from shutil import rmtree
+        rmtree(os.environ['TEST_DIR'])
+        del os.environ['TEST_DIR']
+
+
 class TestSimpleStore(Store, unittest.TestCase):
 
     initstring = 'simple://'
@@ -147,27 +160,14 @@ class TestMemoryStore(Store, unittest.TestCase):
     initstring = 'memory://'
 
 
-class TestFileStore(Store, unittest.TestCase):
+class TestFileStore(PathStore, unittest.TestCase):
 
     initstring = 'file://test'
 
-    def tearDown(self):
-        import shutil
-        self.store.close()
-        shutil.rmtree('test')
 
-
-class TestDBMStore(Store, unittest.TestCase):
+class TestDBMStore(PathStore, unittest.TestCase):
 
     initstring = 'dbm://test.dbm'
-
-    def tearDown(self):
-        import os
-        self.store.close()
-        try:
-            os.remove('test.dbm')
-        except OSError:
-            os.remove('test.dbm.db')
 
 
 class TestSQLiteMemoryStore(Store, unittest.TestCase):
@@ -175,11 +175,6 @@ class TestSQLiteMemoryStore(Store, unittest.TestCase):
     initstring = 'lite://:memory:'
 
 
-class TestSQLiteDiskStore(Store, unittest.TestCase):
+class TestSQLiteDiskStore(PathStore, unittest.TestCase):
 
     initstring = 'lite://test.db'
-
-    def tearDown(self):
-        import os
-        self.store.close()
-        os.remove('test.db')
