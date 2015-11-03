@@ -15,7 +15,7 @@ from shove.base import Mapping, FileBase
 
 
 __all__ = (
-    'FileCache FileLRUCache MemoryCache SimpleCache MemoryLRUCache'
+    'FileCache FileLRUCache MemoryCache SimpleCache MemoryLRUCache '
     'SimpleLRUCache'
 ).split()
 
