@@ -97,7 +97,12 @@ What's new in 0.6.1
 
 - confirm PyPy still works
 
-What's new in 0.6.1
+What's new in 0.6.2
 ===================
 
 - confirm Jython works
+
+What's new in 0.6.3
+===================
+
+- add sqlite support (uses standard library)

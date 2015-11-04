@@ -56,7 +56,7 @@ def tox_recreate():
 
 def release():
     '''release shove'''
-
+    local('jython setup.py bdist_wheel sdist --format=gztar,bztar,zip upload')
 
 
 def inplace():

@@ -2,14 +2,14 @@
 '''shove core.'''
 
 from functools import partial
-from os.path import exists, join
 from os import listdir, remove, makedirs
+from os.path import exists, join
+import sqlite3
 from zlib import compress, decompress, error
 
-from stuf.six import pickle
-from stuf.utils import loads, optimize
-
 from shove._compat import url2pathname, quote_plus, unquote_plus
+from stuf.six import native, pickle
+from stuf.utils import loads, optimize
 
 
 class Base(object):
@@ -51,6 +51,19 @@ class Base(object):
             except error:
                 pass
         return loads(value)
+
+
+class CloseStore(object):
+
+    '''Base store.'''
+
+    def close(self):
+        '''Closes internal store and clears object references.'''
+        try:
+            self._store.close()
+        except AttributeError:
+            pass
+        self._store = None
 
 
 class Mapping(Base):
@@ -138,3 +151,64 @@ class FileBase(Base):
     def _key_to_file(self, key):
         # gives the filesystem path for a key
         return join(self._dir, quote_plus(key))
+
+
+class PathBase(Base):
+
+    '''Base store where updates can be committed to disk.'''
+
+    def __init__(self, engine, **kw):
+        super(PathBase, self).__init__(engine, **kw)
+        if engine.startswith(self.init):
+            self._engine = url2pathname(engine.split('://')[1])
+
+
+class SQLiteBase(PathBase):
+
+    '''Base for file based storage.'''
+
+    def __init__(self, engine, **kw):
+        super(SQLiteBase, self).__init__(engine, **kw)
+        # make store table
+        self._store = sqlite3.connect(self._engine)
+        self._store.text_factory = native
+        self._cursor = self._store.cursor()
+        # create store table if it does not exist
+        self._cursor.execute(
+            '''
+            CREATE TABLE IF NOT EXISTS shove (
+                key TEXT PRIMARY KEY NOT NULL,
+                value TEXT NOT NULL
+            )
+            '''
+        )
+        self._store.commit()
+
+    def __getitem__(self, key):
+        self._cursor.execute('SELECT value FROM shove WHERE key=?', (self.dumps(key),))
+        row = self._cursor.fetchone()
+        if row:
+            return self.loads(row[0])
+        raise KeyError(key)
+
+    def __setitem__(self, k, v):
+        self._cursor.execute(
+            'INSERT OR REPLACE INTO shove VALUES (?, ?)',
+            (self.dumps(k), self.dumps(v))
+        )
+        self._store.commit()
+
+    def __delitem__(self, key):
+        self._cursor.execute('DELETE FROM shove WHERE key=?', (self.dumps(key),))
+        self._store.commit()
+
+    def __iter__(self):
+        for row in self._store.execute('SELECT key FROM shove'):
+            yield self.loads(row[0])
+
+    def __len__(self):
+        return int(self._store.execute('SELECT COUNT(*) FROM shove').fetchone()[0])
+
+    def clear(self):
+        self._cursor.execute('DELETE FROM shove')
+        self._store.commit()

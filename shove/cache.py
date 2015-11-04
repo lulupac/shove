@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 '''shove cache core.'''
 
-from time import time
+from collections import deque
 from copy import deepcopy
 from operator import delitem
-from collections import deque
 from random import seed, sample
 from threading import Condition
-
-from stuf.iterable import xpartmap
+from time import time
 
 from shove._compat import synchronized
-from shove.base import Mapping, FileBase
+from shove.base import Mapping, FileBase, SQLiteBase, CloseStore
+from stuf.iterable import xpartmap
 
 
 __all__ = (
     'FileCache FileLRUCache MemoryCache SimpleCache MemoryLRUCache '
-    'SimpleLRUCache'
+    'SimpleLRUCache SQLiteCache'
 ).split()
 
 
@@ -129,6 +128,21 @@ class FileCache(BaseCache, FileBase):
         super(FileCache, self).__setitem__(key, (time() + self.timeout, value))
 
 
+class SQLiteCache(BaseCache, SQLiteBase, CloseStore):
+
+    '''
+    sqlite-based cache
+
+    shove's URI for sqlite caches follows the form:
+
+    sqlite://<path>
+
+    Where the path is a URI path to a file on a local filesystem or ":memory:".
+    '''
+
+    init = 'sqlite://'
+
+
 class BaseLRUCache(BaseCache):
 
     def __init__(self, engine, **kw):
@@ -234,9 +248,3 @@ class FileLRUCache(BaseLRUCache, FileBase):
     '''
 
     init = 'filelru://'
-
-    def __init__(self, engine, **kw):
-        super(FileLRUCache, self).__init__(engine, **kw)
-
-
-

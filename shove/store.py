@@ -1,28 +1,21 @@
 # -*- coding: utf-8 -*-
 '''shove store support.'''
 
-import shutil
-from copy import deepcopy
-from threading import Condition
 from collections import MutableMapping
+from copy import deepcopy
+import shutil
+from threading import Condition
 
-from shove.base import Mapping, FileBase
-from shove._compat import anydbm, synchronized, url2pathname
+from shove._compat import anydbm, synchronized
+from shove.base import Mapping, FileBase, SQLiteBase, PathBase, CloseStore
+
 
 __all__ = 'DBMStore FileStore MemoryStore SimpleStore SQLiteStore'.split()
 
 
-class BaseStore(Mapping, MutableMapping):
+class BaseStore(Mapping, MutableMapping, CloseStore):
 
     '''Base store.'''
-
-    def close(self):
-        '''Closes internal store and clears object references.'''
-        try:
-            self._store.close()
-        except AttributeError:
-            pass
-        self._store = None
 
 
 class SimpleStore(BaseStore):
@@ -62,14 +55,9 @@ class MemoryStore(SimpleStore):
     __delitem__ = synchronized(SimpleStore.__delitem__)
 
 
-class ClientStore(BaseStore):
+class ClientStore(PathBase, BaseStore):
 
-    '''Base store where updates must be committed to disk.'''
-
-    def __init__(self, engine, **kw):
-        super(ClientStore, self).__init__(engine, **kw)
-        if engine.startswith(self.init):
-            self._engine = url2pathname(engine.split('://')[1])
+    '''Base store where updates are automatically pickled/unpickled.'''
 
     def __getitem__(self, key):
         return self.loads(super(ClientStore, self).__getitem__(key))
@@ -144,3 +132,18 @@ class FileStore(FileBase, BaseStore):
         '''Clear all objects from store.'''
         shutil.rmtree(self._dir)
         self._createdir()
+
+
+class SQLiteStore(SQLiteBase, BaseStore):
+
+    '''
+    sqlite-based object store.
+
+    shove's URI for sqlite stores follows the form:
+
+    sqlite://<path>
+
+    Where the path is a URI path to a file on a local filesystem or ":memory:".
+    '''
+
+    init = 'sqlite://'

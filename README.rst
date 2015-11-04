@@ -8,11 +8,13 @@ Supported storage backends out of the box are:
 - DBM
 - Filesystem
 - Memory
+- sqlite (disk or memory)
 
 Current supported caching backends are:
 
 - Filesystem
 - Memory
+- sqlite (disk or memory)
 
 The simplest *shove* use case...
 

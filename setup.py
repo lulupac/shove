@@ -2,37 +2,41 @@
 # -*- coding: utf-8 -*-
 '''setup for shove'''
 
-from os import getcwd
-from os.path import join
+import sys
 
 from setuptools import setup, find_packages
 
 
 def getversion(fname):
-    '''Get the __version__ without importing.'''
+    '''Get __version__ without importing.'''
     with open(fname) as f:
         for line in f:
             if line.startswith('__version__'):
                 return '%s.%s.%s' % eval(line[13:].rstrip())
 
-install_requires = list(l.strip() for l in open(
-    join(getcwd(), 'reqs/requires.txt'),
-))
+requires = 'futures setuptools stuf>=0.9.14'
+test_requires = 'nose coverage'
+
+if float('%d.%d' % sys.version_info[:2]) < 2.7:
+    requires = 'ordereddict importlib ' + requires
+    test_requires = 'unittest2 ' + test_requires
 
 setup(
     name='shove',
     version=getversion('shove/__init__.py'),
-    description='Common object storage frontend',
+    description='Generic dictionaryish object storage frontend',
     long_description=open('README.rst').read(),
     author='L. C. Rees',
     author_email='lcrees@gmail.com',
     url='https://bitbucket.org/lcrees/shove/',
     license='BSD',
     packages=find_packages(),
-    test_suite='tests',
-    install_requires=install_requires,
+    include_package_data=True,
+    install_requires=requires.split(' '),
+    test_suite='shove.test',
+    tests_require=test_requires.split(' '),
     zip_safe=False,
-    keywords='object storage persistence database shelve',
+    keywords='object storage persistence database dictionary',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
@@ -46,15 +50,17 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'Programming Language :: Python :: Implementation :: Jython',
     ],
-    entry_points='''
+    entry_points='''\
     [shove.stores]
     dbm=shove.store:DBMStore
     file=shove.store:FileStore
+    sqlite=shove.store:SQLiteStore
     memory=shove.store:MemoryStore
     simple=shove.store:SimpleStore
     [shove.caches]
     file=shove.cache:FileCache
     filelru=shove.cache:FileLRUCache
+    sqlite=shove.cache:SQLiteCache
     memlru=shove.cache:MemoryLRUCache
     memory=shove.cache:MemoryCache
     simple=shove.cache:SimpleCache
