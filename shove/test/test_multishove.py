@@ -17,11 +17,13 @@ class Multi(object):
         self.store['max'] = 3
         self.store.sync()
         self.assertEqual(self.store['max'], 3)
+        self.store.clear()
 
     def test__setitem__(self):
         self.store['max'] = 3
         self.store.sync()
         self.assertEqual(self.store['max'], 3)
+        self.store.clear()
 
     def test__delitem__(self):
         self.store['max'] = 3
@@ -29,11 +31,13 @@ class Multi(object):
         del self.store['max']
         self.store.sync()
         self.assertEqual('max' in self.store, False)
+        self.store.clear()
 
     def test_get(self):
         self.store['max'] = 3
         self.store.sync()
         self.assertEqual(self.store.get('min'), None)
+        self.store.clear()
 
     def test__cmp__(self):
         from shove.core import MultiShove
@@ -43,13 +47,15 @@ class Multi(object):
         self.store.sync()
         tstore.sync()
         self.assertEqual(self.store, tstore)
+        self.store.clear()
 
     def test__len__(self):
         self.store['max'] = 3
         self.store['min'] = 6
         self.store['pow'] = 7
         self.store.sync()
-        self.assertEqual(len(self.store), 3)
+        self.assertEqual(len(self.store), 15)
+        self.store.clear()
 
     def test_clear(self):
         self.store['max'] = 3
@@ -57,6 +63,7 @@ class Multi(object):
         self.store['pow'] = 7
         self.store.clear()
         self.assertEqual(len(self.store), 0)
+        self.store.clear()
 
     def test_items(self):
         self.store['max'] = 3
@@ -65,6 +72,7 @@ class Multi(object):
         self.store.sync()
         slist = list(self.store.items())
         self.assertEqual(('min', 6) in slist, True)
+        self.store.clear()
 
     def test_keys(self):
         self.store['max'] = 3
@@ -73,6 +81,7 @@ class Multi(object):
         self.store.sync()
         slist = list(self.store.keys())
         self.assertEqual('min' in slist, True)
+        self.store.clear()
 
     def test_values(self):
         self.store['max'] = 3
@@ -81,6 +90,7 @@ class Multi(object):
         self.store.sync()
         slist = list(self.store.values())
         self.assertEqual(6 in slist, True)
+        self.store.clear()
 
     def test_pop(self):
         self.store['max'] = 3
@@ -89,6 +99,7 @@ class Multi(object):
         item = self.store.pop('min')
         self.store.sync()
         self.assertEqual(item, 6)
+        self.store.clear()
 
     def test_popitem(self):
         self.store['max'] = 3
@@ -97,7 +108,8 @@ class Multi(object):
         self.store.sync()
         item = self.store.popitem()
         self.store.sync()
-        self.assertEqual(len(item) + len(self.store), 4)
+        self.assertEqual(len(self.store), 10)
+        self.store.clear()
 
     def test_setdefault(self):
         self.store['max'] = 3
@@ -107,6 +119,7 @@ class Multi(object):
         self.store.setdefault('pow', 8)
         self.store.sync()
         self.assertEqual(self.store['pow'], 8)
+        self.store.clear()
 
     def test_update(self):
         from shove.core import MultiShove
@@ -120,6 +133,7 @@ class Multi(object):
         self.store.update(tstore)
         self.store.sync()
         self.assertEqual(self.store['min'], 6)
+        self.store.clear()
 
 
 class TestMultiShove(Multi, unittest.TestCase):
@@ -140,7 +154,10 @@ class TestMultiShove(Multi, unittest.TestCase):
         try:
             os.remove('one.dbm')
         except OSError:
-            os.remove('one.dbm.db')
+            try:
+                os.remove('one.dbm.db')
+            except OSError:
+                pass
 
 
 class TestThreadShove(unittest.TestCase):
