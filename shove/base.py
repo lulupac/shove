@@ -5,7 +5,8 @@ from functools import partial
 from os import listdir, remove, makedirs
 from os.path import exists, join
 import sqlite3
-from zlib import compress, decompress, error
+import zlib
+import pickle
 
 from stuf.six import native, pickle
 from stuf.utils import loads, optimize
@@ -18,14 +19,9 @@ class Base(object):
     '''Base for shove.'''
 
     def __init__(self, engine, **kw):
-        # keyword compress True, False, or an integer compression level (1-9)
-        self._compress = kw.get('compress', False)
-        # pickle protocol
-        protocol = kw.get('protocol', pickle.HIGHEST_PROTOCOL)
-        if kw.get('optimize', False):
-            self._optimizer = partial(optimize, p=protocol)
-        else:
-            self._optimizer = partial(pickle.dumps, protocol=protocol)
+        # encode/decode (compression, serialization, ...)
+        self._encoder = kw.get('encoder', lambda x: x)
+        self._decoder = kw.get('decoder', lambda x: x)
 
     def __contains__(self, key):
         try:
@@ -36,22 +32,12 @@ class Base(object):
             return True
 
     def dumps(self, value):
-        '''Optionally serializes and compresses object `value`.'''
-        # serialize anything but ASCII strings
-        value = self._optimizer(value)
-        compression = self._compress
-        if compression:
-            value = compress(value, 9 if compression is True else compression)
-        return value
+        '''Optionally encode object `value`.'''
+        return self._encoder(value)
 
     def loads(self, value):
-        '''Deserializes and optionally decompresses object `value`.'''
-        if self._compress:
-            try:
-                value = decompress(value)
-            except error:
-                pass
-        return loads(value)
+        '''Optionally decode object `value`.'''
+        return self._decoder(value)
 
 
 class CloseStore(object):
