@@ -39,8 +39,6 @@ class BaseCache(object):
         super(BaseCache, self).__init__(engine, **kw)
         # get random seed
         seed()
-        # set maximum number of items to cull if over max
-        self._maxcull = kw.get('maxcull', 10)
         # set max entries
         self._max_entries = kw.get('max_entries', 300)
         # set timeout
