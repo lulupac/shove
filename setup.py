@@ -69,6 +69,7 @@ setup(
     memory=shove.store:MemoryStore
     simple=shove.store:SimpleStore
     [shove.caches]
+    null=shove.cache:NullCache
     file=shove.cache:FileCache
     filelru=shove.cache:FileLRUCache
     lite=shove.cache:SQLiteCache

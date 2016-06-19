@@ -15,8 +15,22 @@ from stuf.iterable import xpartmap
 
 __all__ = (
     'FileCache FileLRUCache MemoryCache SimpleCache MemoryLRUCache '
-    'SimpleLRUCache SQLiteCache'
+    'SimpleLRUCache SQLiteCache NullCache'
 ).split()
+
+
+class NullCache(object):
+    def __init__(self):
+        pass
+
+    def __getitem__(self, item):
+        raise KeyError(item)
+
+    def __setitem__(self, key, value):
+        pass
+
+    def __delitem__(self, key):
+        pass
 
 
 class BaseCache(object):
