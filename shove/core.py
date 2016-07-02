@@ -17,7 +17,7 @@ class Shove(MutableMapping):
 
     '''Common object frontend class.'''
 
-    def __init__(self, store='simple://', cache='null://', **kw):
+    def __init__(self, store='simple://', cache='simple://', **kw):
         super(Shove, self).__init__()
         # load store backend
         self._store = store_backend(store, **kw)
@@ -115,7 +115,7 @@ class MultiShove(MutableMapping):
         # load stores
         self._stores = list(store_backend(i, **kw) for i in stores)
         # load cache
-        self._cache = cache_backend(kw.get('cache', 'null://'), **kw)
+        self._cache = cache_backend(kw.get('cache', 'simple://'), **kw)
         # buffer for lazy writing
         self._buffer = dict()
         # setting for syncing frequency
