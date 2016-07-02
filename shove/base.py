@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 '''shove core.'''
 
-from functools import partial
 from os import listdir, remove, makedirs
 from os.path import exists, join
 import sqlite3
-import zlib
-import pickle
 
-from stuf.six import native, pickle
-from stuf.utils import loads, optimize
+from stuf.six import native
 
 from shove._compat import url2pathname, quote_plus, unquote_plus
 
