@@ -1,3 +1,10 @@
+Fork of [shove](https://github.com/lcrees/shove "lcrees/shove") with following modifications:
+* Added a dispatching feature in MultiShove
+* Replaced serialization and optional compression mechanism with keywords arguments 'encoder' and 'decoder' defaulting to pickle.dumps and pickle.loads
+* Added a 'null' do-nothing cache implementation
+
+---
+
 Common object storage frontend that supports
 dictionary-style access, object serialization
 and compression, and multiple storage and caching
