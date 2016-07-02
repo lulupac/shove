@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/lulupac/shove.svg?branch=master
+    :target: https://travis-ci.org/lulupac/shove
+
 Fork with following modifications:
 
 - Added a dispatching feature in MultiShove
