@@ -52,8 +52,12 @@ class Shove(MutableMapping):
         del self._store[key]
 
     def __len__(self):
+        self.sync()
         return len(self._store)
 
+    def __contains__(self, key):
+        self.sync()
+        return key in self._store
     def __iter__(self):
         self.sync()
         return self._store.__iter__()
