@@ -88,18 +88,6 @@ def copy_dispatcher(stores):
     return inner_dispatcher
 
 
-def round_robin_dispatch(stores):
-    """
-    Disptach item among stores in round-robin fashion.
-    """
-    import itertools
-    store_gen = itertools.cycle(range(len(stores)))
-
-    def inner_dispatcher(key=None, value=None):
-        return next(store_gen)
-    return inner_dispatcher
-
-
 class MultiShove(MutableMapping):
     """
     Common frontend to multiple object stores.
@@ -194,6 +182,20 @@ class MultiShove(MutableMapping):
                 self._stores[store][key] = value
             self._key_stores_map[key] = stores
         self._buffer.clear()
+
+
+# another example of dispatcher for MultiShove
+
+def round_robin_dispatch(stores):
+    """
+    Disptach item among stores in round-robin fashion.
+    """
+    import itertools
+    store_gen = itertools.cycle(range(len(stores)))
+
+    def inner_dispatcher(key=None, value=None):
+        return next(store_gen)
+    return inner_dispatcher
 
 
 class ThreadShove(MultiShove):
