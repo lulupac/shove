@@ -58,6 +58,7 @@ class Shove(MutableMapping):
     def __contains__(self, key):
         self.sync()
         return key in self._store
+
     def __iter__(self):
         self.sync()
         return self._store.__iter__()
@@ -97,11 +98,13 @@ class MultiShove(MutableMapping):
     Common frontend to multiple object stores.
 
     Lulupac: Re-implementation with no cache by default and a user-defined (key, value) pairs
-    distribution strategy (dispatcher + key_stores_map dictionary).
+    distribution dispatcher.
 
-    A dispatcher shall be instantiated on setup with the list of stores. It may take in arguments the key and value
-    and returns a list of store indices in which the key, value pair is stored. The default dispatcher copies item
-    in all stores.
+    A dispatcher is instantiated on setup with the list of stores. It takes in arguments the key and value
+    and returns a list of store indices in which the key, value pair is stored. dispatcher is only used in __setitem__,
+    other methods look up the key in all stores.
+
+    The default dispatcher copies item in all stores.
     """
 
     def __init__(self, *stores, **kw):
@@ -118,9 +121,7 @@ class MultiShove(MutableMapping):
         # setting for syncing frequency
         self._sync = kw.get('sync', 2)
         # dispatcher
-        # dispatcher
         self._dispatcher = kw.get('dispatcher', copy_dispatcher)(self._stores)
-        self._key_stores_map = {}
 
     def __getitem__(self, key):
         try:
@@ -128,11 +129,10 @@ class MultiShove(MutableMapping):
         except KeyError:
             # flush items in buffer to stores
             self.sync()
-            stores = self._key_stores_map[key]
-            for store in stores:
+            for store in self._stores:
                 try:
                     # synchronize cache and store
-                    self._cache[key] = value = self._stores[store][key]
+                    self._cache[key] = value = store[key]
                     return value
                 except KeyError:
                     continue
@@ -147,33 +147,44 @@ class MultiShove(MutableMapping):
     def __delitem__(self, key):
         # flush items in buffer to stores
         self.sync()
-        for store in self._key_stores_map[key]:
-            del self._stores[store][key]
-        del self._key_stores_map[key]
         try:
             del self._cache[key]
         except KeyError:
             pass
+        deleted = False
+        for store in self._stores:
+            try:
+                del store[key]
+            except KeyError:
+                continue
+            deleted = True
+        if not deleted:
+            raise KeyError(key)
 
     def __contains__(self, key):
-        return key in self._key_stores_map
+        self.sync()
+        for store in self._stores:
+            if key in store:
+                return True
+        return False
 
     def __iter__(self):
-        return iter(self._key_stores_map)
+        self.sync()
+        for store in self._stores:
+            for key in store:
+                yield key
 
     def __len__(self):
-        return len(self._key_stores_map)
+        self.sync()
+        return sum(map(len, self._stores))
 
     def close(self):
         '''Finalizes and closes shove stores.'''
-        # if close has been called, pass
-        stores = self._stores
-        if self._stores is not None:
-            self.sync()
-            # close stores
-            for idx, store in enumerate(stores):
+        self.sync()
+        # close stores
+        for store in self._stores:
+            if hasattr(store, 'close'):
                 store.close()
-                stores[idx] = None
         self._cache = self._buffer = self._stores = None
 
     def sync(self):
@@ -181,10 +192,8 @@ class MultiShove(MutableMapping):
         Writes buffer to stores.
         """
         for key, value in self._buffer.iteritems():
-            stores = self._dispatcher(key, value)
-            for store in stores:
+            for store in self._dispatcher(key, value):
                 self._stores[store][key] = value
-            self._key_stores_map[key] = stores
         self._buffer.clear()
 
 
