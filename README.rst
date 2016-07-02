@@ -1,7 +1,10 @@
-Fork of [shove](https://github.com/lcrees/shove "lcrees/shove") with following modifications:
-* Added a dispatching feature in MultiShove
-* Replaced serialization and optional compression mechanism with keywords arguments 'encoder' and 'decoder' defaulting to pickle.dumps and pickle.loads
-* Added a 'null' do-nothing cache implementation
+Fork with following modifications:
+
+- Added a dispatching feature in MultiShove
+- Replaced serialization and optional compression mechanism with keywords arguments 'encoder' and 'decoder' defaulting to pickle.dumps and pickle.loads
+- Added a 'null' do-nothing cache implementation
+- Travis CI
+
 
 ---
 
