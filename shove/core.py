@@ -191,7 +191,7 @@ class MultiShove(MutableMapping):
         """
         Writes buffer to stores.
         """
-        for key, value in self._buffer.iteritems():
+        for key, value in self._buffer.items():
             for store in self._dispatcher(key, value):
                 self._stores[store][key] = value
         self._buffer.clear()
