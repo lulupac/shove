@@ -20,7 +20,7 @@ __all__ = (
 
 
 class NullCache(object):
-    def __init__(self):
+    def __init__(self, engine, **kw):
         pass
 
     def __getitem__(self, item):
