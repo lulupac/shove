@@ -12,9 +12,8 @@ tearDownModule = Spawn.tearDownModule
 class NoTimeout(object):
 
     def setUp(self):
-        from stuf.six import pickle
         from shove._imports import cache_backend
-        self.cache = cache_backend(self.initstring, encoder=pickle.dumps, decoder=pickle.loads)
+        self.cache = cache_backend(self.initstring)
 
     def tearDown(self):
         self.cache = None
@@ -37,9 +36,8 @@ class Cache(NoTimeout):
 
     def test_timeout(self):
         import time
-        from stuf.six import pickle
         from shove._imports import cache_backend
-        cache = cache_backend(self.initstring, timeout=1, encoder=pickle.dumps, decoder=pickle.loads)
+        cache = cache_backend(self.initstring, timeout=1)
         cache['test'] = 'test'
         time.sleep(3)
         def tmp(): #@IgnorePep8
@@ -50,9 +48,8 @@ class Cache(NoTimeout):
 class CacheCull(Cache):
 
     def test_cull(self):
-        from stuf.six import pickle
         from shove._imports import cache_backend
-        cache = cache_backend(self.initstring, max_entries=1, encoder=pickle.dumps, decoder=pickle.loads)
+        cache = cache_backend(self.initstring, max_entries=1)
         cache['test1'] = 'test'
         cache['test2'] = 'test2'
         cache['test3'] = 'test3'

@@ -5,7 +5,7 @@ from os import listdir, remove, makedirs
 from os.path import exists, join
 import sqlite3
 
-from stuf.six import native
+from stuf.six import native, pickle
 
 from shove._compat import url2pathname, quote_plus, unquote_plus
 
@@ -16,8 +16,8 @@ class Base(object):
 
     def __init__(self, engine, **kw):
         # encode/decode (compression, serialization, ...)
-        self._encoder = kw.get('encoder', lambda x: x)
-        self._decoder = kw.get('decoder', lambda x: x)
+        self._encoder = kw.get('encoder', pickle.dumps)
+        self._decoder = kw.get('decoder', pickle.loads)
 
     def __contains__(self, key):
         try:

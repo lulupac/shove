@@ -7,10 +7,9 @@ from stuf.six import unittest, keys, values, items
 class Store(object):
 
     def setUp(self):
-        from stuf.six import pickle
         from shove import Shove
         self.store = Shove(
-            self.initstring, sync=0, encoder=pickle.dumps, decoder=pickle.loads
+            self.initstring, sync=0
         )
 
     def tearDown(self):
