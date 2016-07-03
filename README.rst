@@ -6,7 +6,8 @@ Fork with following modifications:
 - Added a dispatching feature in MultiShove
 - Replaced serialization and optional compression mechanism with keywords arguments 'encoder' and 'decoder' defaulting to pickle.dumps and pickle.loads
 - Added a 'null' do-nothing cache implementation
-- Travis CI
+- Added Travis CI
+- Replaced the key time-to-live mechanism in BaseCache with a thread-based purge mechanism
 
 
 ---
