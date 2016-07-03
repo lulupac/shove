@@ -5,8 +5,8 @@ from collections import deque
 from copy import deepcopy
 from operator import delitem
 from random import seed, sample
-from threading import Condition
-from time import time
+from threading import Thread, Condition
+from time import time, sleep
 
 from shove._compat import synchronized
 from shove.base import Mapping, FileBase, SQLiteBase, CloseStore
@@ -42,29 +42,47 @@ class BaseCache(object):
         # set max entries
         self._max_entries = kw.get('max_entries', 300)
         # set timeout
-        self.timeout = kw.get('timeout', 300)
+        self._key_timeout = kw.get('timeout', 300)
+        self._purge_timeout = kw.get('purge_timeout', 0.2)
+        self._key_ttl_map = {}
+        purge_daemon = Thread(target=self._purge_daemon_loop, args=[self._purge_timeout])
+        purge_daemon.setDaemon(True)
+        purge_daemon.start()
 
     def __getitem__(self, key):
-        exp, value = super(BaseCache, self).__getitem__(key)
-        # delete if item timed out.
-        if exp < time():
-            super(BaseCache, self).__delitem__(key)
-            raise KeyError(key)
-        return value
+        self._reset_timeout(key)
+        return super(BaseCache, self).__getitem__(key)
 
     def __setitem__(self, key, value):
-        # set expiration time and value
-        exp = time() + self.timeout
-        super(BaseCache, self).__setitem__(key, (exp, value))
+        self._reset_timeout(key)
+        super(BaseCache, self).__setitem__(key, value)
         # cull values if over max number of entries
         if len(self) > self._max_entries:
             self._cull()
+
+    def __delitem__(self, key):
+        super(BaseCache, self).__delitem__(key)
+        del self._key_ttl_map[key]
 
     def _cull(self):
         # cull remainder of allowed quota at random
         xpartmap(
             delitem, sample(list(self), len(self) - self._max_entries), self
         )
+
+    def _reset_timeout(self, key):
+        self._key_ttl_map[key] = time() + self._key_timeout
+
+    def _purge_daemon_loop(self, purge_timeout):
+        while True:
+            expired_keys = [key for key, expiry_time in self._key_ttl_map.items() if expiry_time < time()]
+            for key in expired_keys:
+                try:
+                    del self[key]
+                except KeyError:
+                    pass
+            if purge_timeout:
+                sleep(purge_timeout)
 
 
 class SimpleCache(BaseCache, Mapping):
