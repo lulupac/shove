@@ -138,25 +138,6 @@ class FileCache(BaseCache, FileBase):
 
     init = 'file://'
 
-    def __init__(self, engine, **kw):
-        super(FileCache, self).__init__(engine, **kw)
-
-    def __getitem__(self, key):
-        try:
-            exp, value = super(FileCache, self).__getitem__(key)
-            # remove item if time has expired.
-            if exp < time():
-                del self[key]
-                raise KeyError(key)
-            return value
-        except:
-            raise KeyError(key)
-
-    def __setitem__(self, key, value):
-        if len(self) >= self._max_entries:
-            self._cull()
-        super(FileCache, self).__setitem__(key, (time() + self.timeout, value))
-
 
 class SQLiteCache(BaseCache, SQLiteBase, CloseStore):
 
